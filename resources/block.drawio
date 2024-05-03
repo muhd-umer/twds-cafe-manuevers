@@ -1,0 +1,99 @@
+<mxfile host="Electron" modified="2024-04-05T19:00:09.752Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="cDNNttpD8HqqGen1_TAw" version="23.1.5" type="device">
+  <diagram name="Page-1" id="CMlmor_M2K6gs54Cv_gr">
+    <mxGraphModel dx="645" dy="444" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Palatino Linotype;" parent="1" source="DcirvtAo6yukVZbn67KR-5" target="DcirvtAo6yukVZbn67KR-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="205" />
+              <mxPoint x="430" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-5" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Palatino Linotype;labelBackgroundColor=none;fillColor=#dcf8f9;strokeColor=default;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="440" y="130" width="310" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Palatino Linotype;labelBackgroundColor=none;fontColor=default;strokeWidth=1;" parent="1" source="DcirvtAo6yukVZbn67KR-1" target="DcirvtAo6yukVZbn67KR-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-1" value="&lt;b&gt;Decision Making&lt;br&gt;&lt;/b&gt;(DRL)" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;fillColor=#FFFDE3;strokeColor=#36393d;" parent="1" vertex="1">
+          <mxGeometry x="250" y="130" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=none;fontFamily=Palatino Linotype;" parent="1" source="DcirvtAo6yukVZbn67KR-3" target="DcirvtAo6yukVZbn67KR-5" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="310" />
+              <mxPoint x="595" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-3" value="&lt;b&gt;Control&lt;/b&gt;&lt;br&gt;(Maneuver &amp;amp; Speed)" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;fillColor=#FFFDE3;strokeColor=#56517e;fontStyle=0" parent="1" vertex="1">
+          <mxGeometry x="240" y="220" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-8" value="Environment &lt;span style=&quot;font-weight: normal;&quot;&gt;~ Simulator&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="515" y="130" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-14" value="Sensors&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;align=right;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="510" y="160" width="72" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-6" value="AV(s)&lt;br&gt;Perception" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;fillColor=#FFF5F5;strokeColor=#36393d;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="448" y="160" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-15" value="Estimator&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;align=right;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="510" y="220" width="72" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-9" value="Fuel&lt;br&gt;Model" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;fillColor=#FFF5F5;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="448" y="220" width="70" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-12" value="World" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;fillColor=#FAF1DA;strokeColor=default;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="592" y="160" width="150" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;labelBackgroundColor=none;fontFamily=Palatino Linotype;" parent="1" source="DcirvtAo6yukVZbn67KR-10" target="DcirvtAo6yukVZbn67KR-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="592" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontFamily=Palatino Linotype;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="587" y="230" as="sourcePoint" />
+            <mxPoint x="528" y="201" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="587" y="201" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DcirvtAo6yukVZbn67KR-10" value="&lt;div style=&quot;&quot;&gt;&lt;/div&gt;&lt;span style=&quot;&quot;&gt;• Traffic&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;&quot;&gt;• Roads &amp;amp; Lanes&lt;/span&gt;&lt;br&gt;• Intersections&lt;br&gt;•&amp;nbsp;&lt;span style=&quot;&quot;&gt;U-turns&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;strokeColor=default;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="610" y="187" width="132" height="83" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-7" value="Update Environment State" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Palatino Linotype;" parent="1" vertex="1">
+          <mxGeometry x="400" y="284" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-9" value="$$S_{t+1}$$" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontFamily=Palatino Linotype;" parent="1" vertex="1">
+          <mxGeometry x="537" y="284" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-11" value="$$S_{t}$$" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontFamily=Palatino Linotype;" parent="1" vertex="1">
+          <mxGeometry x="393" y="137" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-13" value="State" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Palatino Linotype;" parent="1" vertex="1">
+          <mxGeometry x="375" y="136" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-15" value="Action" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Palatino Linotype;" parent="1" vertex="1">
+          <mxGeometry x="303" y="266" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-16" value="$$A_{t}$$" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontFamily=Palatino Linotype;" parent="1" vertex="1">
+          <mxGeometry x="326" y="267" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-17" value="" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontFamily=Palatino Linotype;labelBackgroundColor=none;strokeWidth=1;fillColor=#F3E8FF;strokeColor=default;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="592" y="187" width="29" height="83" as="geometry" />
+        </mxCell>
+        <mxCell id="Nz-zG978GDf_bJ0Nu7mB-18" value="Reward" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;rotation=-90;fontFamily=Palatino Linotype;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="571" y="213.5" width="70" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

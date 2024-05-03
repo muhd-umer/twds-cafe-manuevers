@@ -1,6 +1,6 @@
 # Towards Collaborative and Fuel-Efficient Maneuvers for Autonomous Vehicles
 
-To be added.
+TODO: Add a brief description of the project.
 
 ## Block Diagram
 
@@ -8,18 +8,16 @@ To be added.
 <img src="resources/block.png" width="700px"/>
 </p>
 
+TODO: Add a brief description of the block diagram.
+
 ## Usage
 
 Clone the repository:
 
 ```shell
-git clone https://github.com/muhd-umer/deep-rl-uavtraj
+git clone https://github.com/muhd-umer/twds-cafe-manuevers.git
 ```
 
-All dependencies are bundled with Comyx. You can install the package using pip:
-
-```shell
-pip install comyx
-```
+TODO: Add instructions for running the code.
 
 *Note: It is recommended to create a new virtual environment so that updates/downgrades of packages do not break other projects.*

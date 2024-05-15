@@ -27,7 +27,7 @@ route_comb = [
 ] * 100
 
 traffic = {}
-veh_per_min = 60 * random.uniform(10, 20)  # vehicles per minute
+veh_per_min = 60 * random.uniform(15, 25)  # vehicles per minute
 start_time = random.uniform(0, 5)  # seconds
 
 # For an episode with maximum_episode_steps=3000 and step time=0.1s, the maximum

@@ -43,14 +43,18 @@ def observation_adapter(agent_observation, /):
 
 
 def action_adapter(agent_action, /):
-    throttle, brake, steering = agent_action
-    return np.array([throttle, brake, steering * np.pi * 0.25], dtype=np.float32)
+    target_speed, lane_change_discrete = agent_action
+
+    # Map discrete action to lane change (-1, 0, 1)
+    lane_change = lane_change_discrete - 1
+
+    return {"target_speed": target_speed, "lane_change": lane_change}
 
 
 # ACTION_SPACE
 ACTION_SPACE = gym.spaces.Dict(
     {
-        "target_speed": gym.spaces.Box(low=0.0, high=1.0, shape=(1,)),
+        "target_speed": gym.spaces.Box(low=0.0, high=30.0, shape=(), dtype=np.float32),
         "lane_change": gym.spaces.Discrete(3),
     }
 )
@@ -93,23 +97,25 @@ ModelCatalog.register_custom_model(TrainingModel.NAME, TrainingModel)
 
 class RLlibTorchSavedModelAgent(Agent):
     def __init__(self, path_to_model, observation_space, policy_name="default_policy"):
-        path_to_model = str(path_to_model)  # might be a str or a Path, normalize to str
+        path_to_model = Path(path_to_model)  # Ensure path is a Path object
         self._prep = ModelCatalog.get_preprocessor_for_space(observation_space)
         self._model = torch.load(path_to_model)
         self._model.eval()
 
     def act(self, obs):
         obs = self._prep.transform(obs)
-        obs = torch.tensor(obs).float()
-        action = self._model(obs)
-        return action.detach().numpy()
+        obs_tensor = torch.tensor([obs], dtype=torch.float32)
+        with torch.no_grad():
+            action_tensor = self._model(obs_tensor)
+        action = action_tensor.numpy()[0]
+        return action
 
 
 rllib_agent = {
     "agent_spec": AgentSpec(
         interface=AgentInterface.from_type(AgentType.Standard, max_episode_steps=500),
         agent_params={
-            "path_to_model": Path(__file__).resolve().parent / "model",
+            "path_to_model": Path(__file__).resolve().parent / "model.pt",
             "observation_space": FLATTENED_OBSERVATION_SPACE,
         },
         agent_builder=RLlibTorchSavedModelAgent,

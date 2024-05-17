@@ -3,12 +3,22 @@ from itertools import combinations
 from pathlib import Path
 
 from smarts.sstudio import gen_scenario
-from smarts.sstudio import sstypes as t
-
-traffic_actor = t.TrafficActor(
-    name="car",
-    speed=t.Distribution(sigma=0.2, mean=1.0),
+from smarts.sstudio.sstypes import (
+    Flow,
+    Mission,
+    Route,
+    Scenario,
+    Traffic,
+    TrafficActor,
+    TrapEntryTactic,
 )
+
+normal = TrafficActor(
+    name="car",
+)
+
+LOW = 35
+HIGH = 45
 
 # flow_name = (start_lane, end_lane)
 route_opt = [
@@ -17,6 +27,7 @@ route_opt = [
     (2, 2),
 ]
 
+# Traffic combinations = 3C2 + 3C3 = 3 + 1 = 4
 # Repeated traffic combinations = 4 * 100 = 400
 min_flows = 2
 max_flows = 3
@@ -27,49 +38,47 @@ route_comb = [
 ] * 100
 
 traffic = {}
-veh_per_min = 60 * random.uniform(25, 35)  # vehicles per minute
-start_time = random.uniform(0, 5)  # seconds
-
-# For an episode with maximum_episode_steps=3000 and step time=0.1s, the maximum
-# episode time=300s. Hence, traffic is set to end at 900s (60 * 15), which is
-# greater than maximum episode time of 300s.
 for name, routes in enumerate(route_comb):
-    traffic[str(name)] = t.Traffic(
+    traffic[str(name)] = Traffic(
         flows=[
-            t.Flow(
-                route=t.Route(
-                    begin=("projE3", start_lane, 0),
-                    end=("projE3", end_lane, "max"),
+            Flow(
+                route=Route(
+                    begin=("gneE3", start_lane, 0),
+                    end=("gneE3", end_lane, "max"),
                 ),
-                rate=veh_per_min,
-                begin=start_time,
+                # Random flow rate, between x and y vehicles per minute.
+                rate=60 * random.uniform(LOW, HIGH),
+                # Random flow start time, between x and y seconds.
+                begin=random.uniform(0, 5),
+                # For an episode with maximum_episode_steps=3000 and step
+                # time=0.1s, the maximum episode time=300s. Hence, traffic is
+                # set to end at 900s, which is greater than maximum episode
+                # time of 300s.
                 end=60 * 15,
-                actors={traffic_actor: 1},
+                actors={normal: 1},
                 randomly_spaced=True,
             )
             for start_lane, end_lane in routes
         ]
     )
 
-# Ego missions
 ego_missions = [
-    t.Mission(
-        t.Route(begin=("projE3", 0, 10), end=("projE3", 0, "max")),
-        entry_tactic=t.TrapEntryTactic(start_time=2),
+    Mission(
+        Route(begin=("gneE3", 0, 10), end=("gneE3", 0, "max")),
+        entry_tactic=TrapEntryTactic(start_time=19),
     ),
-    t.Mission(
-        t.Route(begin=("projE3", 1, 10), end=("projE3", 1, "max")),
-        entry_tactic=t.TrapEntryTactic(start_time=5),
+    Mission(
+        Route(begin=("gneE3", 1, 10), end=("gneE3", 1, "max")),
+        entry_tactic=TrapEntryTactic(start_time=21),
     ),
-    t.Mission(
-        t.Route(begin=("projE3", 2, 10), end=("projE3", 2, "max")),
-        entry_tactic=t.TrapEntryTactic(start_time=8),
+    Mission(
+        Route(begin=("gneE3", 2, 10), end=("gneE3", 2, "max")),
+        entry_tactic=TrapEntryTactic(start_time=17),
     ),
 ]
 
-# Generate the scenario
 gen_scenario(
-    scenario=t.Scenario(
+    scenario=Scenario(
         traffic=traffic,
         ego_missions=ego_missions,
     ),

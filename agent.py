@@ -36,36 +36,48 @@ from utils.custom_obs import observation_adapter
 torch, nn = try_import_torch()
 
 
-def observation_adapter(agent_observation, /):
+def obs_adapter(agent_observation, /):
     return gym.spaces.utils.flatten(
         OBSERVATION_SPACE, observation_adapter.transform(agent_observation)
     )
 
 
+# def action_adapter(agent_action, /):
+#     lane_change_discrete = agent_action["lane_change"]
+#     target_speed = agent_action["target_speed"]
+
+#     # Map discrete action to lane change (-1, 0, 1)
+#     lane_change = lane_change_discrete - 1
+
+#     return {"target_speed": target_speed, "lane_change": lane_change}
+
+
 def action_adapter(agent_action, /):
-    target_speed, lane_change_discrete = agent_action
-
-    # Map discrete action to lane change (-1, 0, 1)
-    lane_change = lane_change_discrete - 1
-
-    return {"target_speed": target_speed, "lane_change": lane_change}
+    throttle, brake, steering = agent_action
+    return np.array([throttle, brake, steering * np.pi * 0.25], dtype=np.float32)
 
 
-# ACTION_SPACE
-ACTION_SPACE = gym.spaces.Dict(
-    {
-        "target_speed": gym.spaces.Box(low=0.0, high=30.0, shape=(), dtype=np.float32),
-        "lane_change": gym.spaces.Discrete(3),
-    }
+ACTION_SPACE = gym.spaces.Box(
+    low=np.array([0.0, 0.0, -1.0]), high=np.array([1.0, 1.0, 1.0]), dtype=np.float32
 )
+
+# # ACTION_SPACE
+# ACTION_SPACE = gym.spaces.Tuple(
+#     (
+#         gym.spaces.Box(low=-np.inf, high=np.inf, shape=(), dtype=np.float32),
+#         gym.spaces.Box(low=0, high=2, shape=(), dtype=np.int8),
+#     )
+# )
 
 # OBSERVATION_SPACE
 OBSERVATION_SPACE = gym.spaces.Dict(
     {
-        "speed": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,)),
-        "steering": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,)),
-        "ego_ttc": gym.spaces.Box(low=-1e10, high=1e10, shape=(3,)),
-        "ego_lane_dist": gym.spaces.Box(low=-1e10, high=1e10, shape=(3,)),
+        "speed": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,), dtype=np.float32),
+        "steering": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,), dtype=np.float32),
+        "ego_ttc": gym.spaces.Box(low=-1e10, high=1e10, shape=(3,), dtype=np.float32),
+        "ego_lane_dist": gym.spaces.Box(
+            low=-1e10, high=1e10, shape=(3,), dtype=np.float32
+        ),
     }
 )
 
@@ -113,13 +125,17 @@ class RLlibTorchSavedModelAgent(Agent):
 
 rllib_agent = {
     "agent_spec": AgentSpec(
-        interface=AgentInterface.from_type(AgentType.Standard, max_episode_steps=500),
+        interface=AgentInterface.from_type(
+            AgentType.Standard,
+            # neighborhood_vehicle_states=True,
+            max_episode_steps=500,
+        ),
         agent_params={
             "path_to_model": Path(__file__).resolve().parent / "model.pt",
             "observation_space": FLATTENED_OBSERVATION_SPACE,
         },
         agent_builder=RLlibTorchSavedModelAgent,
-        observation_adapter=observation_adapter,
+        observation_adapter=obs_adapter,
         action_adapter=action_adapter,
     ),
     "observation_space": FLATTENED_OBSERVATION_SPACE,

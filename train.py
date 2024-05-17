@@ -2,10 +2,12 @@
 Train multiple agents using the PPO algorithm on a set of scenarios
 """
 
+import warnings
 from pathlib import Path
 from pprint import pprint as print
 from typing import Dict, Literal, Optional, Union
 
+import gymnasium as gym
 import numpy as np
 
 # SMARTS
@@ -24,9 +26,11 @@ from ray.rllib.utils.typing import PolicyID
 from smarts.env.rllib_hiway_env import RLlibHiWayEnv
 from smarts.sstudio.scenario_construction import build_scenarios
 
+from agent import TrainingModel, rllib_agent
 from config import default_parser
 
-from .agent import TrainingModel, rllib_agent
+gym.logger.set_level(40)
+warnings.filterwarnings("ignore")
 
 
 # Custom metrics to be added to tensorboard
@@ -40,7 +44,6 @@ class Callbacks(DefaultCallbacks):
         env_index: int,
         **kwargs,
     ):
-
         episode.user_data["ego_reward"] = []
 
     @staticmethod
@@ -78,13 +81,13 @@ class Callbacks(DefaultCallbacks):
 def main(
     scenarios,
     envision,
-    time_total_s,
-    rollout_fragment_length,
-    train_batch_size,
+    time_total,
+    rollout_length,
+    batch_size,
     seed,
     num_agents,
     num_workers,
-    resume_training,
+    resume,
     result_dir,
     checkpoint_freq: int,
     checkpoint_num: Optional[int],
@@ -117,17 +120,11 @@ def main(
                 "agent_specs": agent_specs,
                 "observation_options": "multi_agent",
             },
-            disable_env_checking=True,
         )
         .framework(framework="torch")  # Use PyTorch framework
-        .rollouts(
-            rollout_fragment_length=rollout_fragment_length,
-            num_rollout_workers=num_workers,
-            num_envs_per_worker=1,
-        )
         .training(
             lr_schedule=[[0, 1e-3], [1e3, 5e-4], [1e5, 1e-4], [1e7, 5e-5], [1e8, 1e-5]],
-            train_batch_size=train_batch_size,
+            train_batch_size=batch_size,
         )
         .multi_agent(
             policies=rllib_policies,
@@ -142,7 +139,7 @@ def main(
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
         return checkpoint_dir
 
-    if resume_training:
+    if resume:
         checkpoint = str(get_checkpoint_dir("latest"))
     if checkpoint_num:
         checkpoint = str(get_checkpoint_dir(checkpoint_num))
@@ -159,7 +156,7 @@ def main(
     checkpoint_iteration = checkpoint_num or 0
 
     try:
-        while result.get("time_total_s", 0) < time_total_s:
+        while result.get("time_total", 0) < time_total:
             result = algo.train()
             print(f"======== Iteration {result['training_iteration']} ========")
             print(result, depth=1)
@@ -177,8 +174,8 @@ def main(
 
 
 if __name__ == "__main__":
-    default_result_dir = str(Path(__file__).resolve().parent / "results" / "pg_results")
-    parser = default_parser("rllib-example", default_result_dir)
+    default_result_dir = str(Path(__file__).resolve().parent / "results")
+    parser = default_parser("proj", default_result_dir)
     parser.add_argument(
         "--checkpoint-num",
         type=int,
@@ -203,13 +200,13 @@ if __name__ == "__main__":
     main(
         scenarios=args.scenarios,
         envision=args.envision,
-        time_total_s=args.time_total_s,
-        rollout_fragment_length=args.rollout_fragment_length,
-        train_batch_size=args.train_batch_size,
+        time_total=args.time_total,
+        rollout_length=args.rollout_length,
+        batch_size=args.batch_size,
         seed=args.seed,
         num_agents=args.num_agents,
         num_workers=args.num_workers,
-        resume_training=args.resume_training,
+        resume=args.resume,
         result_dir=args.result_dir,
         checkpoint_freq=max(args.checkpoint_freq, 1),
         checkpoint_num=args.checkpoint_num,

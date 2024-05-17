@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Define constants for default values
 DEFAULT_SCENARIOS = None
-DEFAULT_ENVISION = False
+DEFAULT_ENVISION = True
 DEFAULT_BATCH_SIZE = 2000
 DEFAULT_TIME_TOTAL = 1 * 60 * 60  # 1 hour
 DEFAULT_SEED = 42

@@ -9,11 +9,7 @@ from typing import Dict, Literal, Optional, Union
 
 import gymnasium as gym
 import numpy as np
-
-# SMARTS
 import smarts
-
-# Ray RLlib
 from ray.rllib.algorithms.algorithm import Algorithm, AlgorithmConfig
 from ray.rllib.algorithms.callbacks import DefaultCallbacks
 from ray.rllib.algorithms.ppo import PPOConfig
@@ -23,13 +19,13 @@ from ray.rllib.evaluation.episode_v2 import EpisodeV2
 from ray.rllib.evaluation.rollout_worker import RolloutWorker
 from ray.rllib.policy.policy import Policy
 from ray.rllib.utils.typing import PolicyID
-from smarts.env.rllib_hiway_env import RLlibHiWayEnv
 from smarts.sstudio.scenario_construction import build_scenarios
 
 from agent import TrainingModel, rllib_agent
 from config import default_parser
+from hiway_env import HiWayEnv
 
-gym.logger.set_level(40)
+gym.logger.set_level(50)
 warnings.filterwarnings("ignore")
 
 
@@ -109,7 +105,7 @@ def main(
     algo_config: AlgorithmConfig = (
         PPOConfig()
         .environment(
-            env=RLlibHiWayEnv,
+            env=HiWayEnv,
             env_config={
                 "seed": seed,
                 "scenarios": [
@@ -174,8 +170,7 @@ def main(
 
 
 if __name__ == "__main__":
-    default_result_dir = str(Path(__file__).resolve().parent / "results")
-    parser = default_parser("proj", default_result_dir)
+    parser = default_parser("proj")
     parser.add_argument(
         "--checkpoint-num",
         type=int,
@@ -189,12 +184,14 @@ if __name__ == "__main__":
         help="Episodes are divided into fragments of this many steps for each rollout.",
     )
     args = parser.parse_args()
+
     if not args.scenarios:
-        args.scenarios = [
-            str(Path(__file__).absolute().parent / "sumo" / "free"),
-            str(Path(__file__).absolute().parent / "sumo" / "normal"),
-            str(Path(__file__).absolute().parent / "sumo" / "congested"),
-        ]
+        raise ValueError("Please provide scenarios to train on.")
+
+    result_dir = str(
+        Path(__file__).resolve().parent / f"results/{args.scenarios[0].split('/')[-1]}"
+    )
+    Path(result_dir).mkdir(parents=True, exist_ok=True)
     build_scenarios(scenarios=args.scenarios, clean=False, seed=args.seed)
 
     main(
@@ -207,7 +204,7 @@ if __name__ == "__main__":
         num_agents=args.num_agents,
         num_workers=args.num_workers,
         resume=args.resume,
-        result_dir=args.result_dir,
+        result_dir=result_dir,
         checkpoint_freq=max(args.checkpoint_freq, 1),
         checkpoint_num=args.checkpoint_num,
         log_level=args.log_level,

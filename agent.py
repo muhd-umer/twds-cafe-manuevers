@@ -31,7 +31,7 @@ from smarts.core.agent import Agent
 from smarts.core.agent_interface import AgentInterface, AgentType
 from smarts.zoo.agent_spec import AgentSpec
 
-from utils.custom_obs import observation_adapter
+from hiway_env.custom_obs import observation_adapter
 
 torch, nn = try_import_torch()
 

@@ -129,15 +129,15 @@ def lane_ttc(obs: Union[Observation, Dict]) -> Dict[str, np.ndarray]:
 
     # distance of vehicle from center of lane
     closest_wp = min(wps, key=lambda wp: wp.dist_to(ego.position))
-    # signed_dist_from_center = closest_wp.signed_lateral_error(ego.position)
-    # lane_half_width = closest_wp.lane_width * 0.5
-    # norm_dist_from_center = signed_dist_from_center / lane_half_width
+    signed_dist_from_center = closest_wp.signed_lateral_error(ego.position)
+    lane_half_width = closest_wp.lane_width * 0.5
+    norm_dist_from_center = signed_dist_from_center / lane_half_width
     ego_ttc, ego_lane_dist = _ego_ttc_lane_dist(
         ego, neighborhood_vehicle_states, waypoint_paths, closest_wp.lane_index
     )
     return {
-        # "distance_from_center": np.array([norm_dist_from_center]),
-        # "angle_error": np.array([closest_wp.relative_heading(ego.heading)]),
+        "distance_from_center": np.array([norm_dist_from_center]),
+        "angle_error": np.array([closest_wp.relative_heading(ego.heading)]),
         "speed": np.array([ego.speed]),
         "steering": np.array([ego.steering]),
         "ego_ttc": np.array(ego_ttc),

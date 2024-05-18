@@ -42,42 +42,23 @@ def obs_adapter(agent_observation, /):
     )
 
 
-# def action_adapter(agent_action, /):
-#     lane_change_discrete = agent_action["lane_change"]
-#     target_speed = agent_action["target_speed"]
-
-#     # Map discrete action to lane change (-1, 0, 1)
-#     lane_change = lane_change_discrete - 1
-
-#     return {"target_speed": target_speed, "lane_change": lane_change}
-
-
-def action_adapter(agent_action, /):
-    throttle, brake, steering = agent_action
-    return np.array([throttle, brake, steering * np.pi * 0.25], dtype=np.float32)
-
-
-ACTION_SPACE = gym.spaces.Box(
-    low=np.array([0.0, 0.0, -1.0]), high=np.array([1.0, 1.0, 1.0]), dtype=np.float32
+# ACTION_SPACE
+ACTION_SPACE = gym.spaces.Tuple(
+    (
+        gym.spaces.Box(low=0, high=60, shape=(), dtype=float),
+        gym.spaces.Box(low=0, high=2, shape=(), dtype=int),
+    )
 )
-
-# # ACTION_SPACE
-# ACTION_SPACE = gym.spaces.Tuple(
-#     (
-#         gym.spaces.Box(low=-np.inf, high=np.inf, shape=(), dtype=np.float32),
-#         gym.spaces.Box(low=0, high=2, shape=(), dtype=np.int8),
-#     )
-# )
 
 # OBSERVATION_SPACE
 OBSERVATION_SPACE = gym.spaces.Dict(
     {
-        "speed": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,), dtype=np.float32),
-        "steering": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,), dtype=np.float32),
-        "ego_ttc": gym.spaces.Box(low=-1e10, high=1e10, shape=(3,), dtype=np.float32),
-        "ego_lane_dist": gym.spaces.Box(
-            low=-1e10, high=1e10, shape=(3,), dtype=np.float32
-        ),
+        "distance_from_center": gym.spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+        "angle_error": gym.spaces.Box(low=-np.pi, high=np.pi, shape=(1,)),
+        "speed": gym.spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+        "steering": gym.spaces.Box(low=-np.inf, high=np.inf, shape=(1,)),
+        "ego_lane_dist": gym.spaces.Box(low=-np.inf, high=np.inf, shape=(3,)),
+        "ego_ttc": gym.spaces.Box(low=-np.inf, high=np.inf, shape=(3,)),
     }
 )
 
@@ -126,8 +107,8 @@ class RLlibTorchSavedModelAgent(Agent):
 rllib_agent = {
     "agent_spec": AgentSpec(
         interface=AgentInterface.from_type(
-            AgentType.Standard,
-            # neighborhood_vehicle_states=True,
+            AgentType.LanerWithSpeed,
+            neighborhood_vehicle_states=True,
             max_episode_steps=500,
         ),
         agent_params={
@@ -136,7 +117,7 @@ rllib_agent = {
         },
         agent_builder=RLlibTorchSavedModelAgent,
         observation_adapter=obs_adapter,
-        action_adapter=action_adapter,
+        # action_adapter=action_adapter,
     ),
     "observation_space": FLATTENED_OBSERVATION_SPACE,
     "action_space": ACTION_SPACE,

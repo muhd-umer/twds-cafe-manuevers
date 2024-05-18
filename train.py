@@ -2,6 +2,7 @@
 Train multiple agents using the PPO algorithm on a set of scenarios
 """
 
+import multiprocessing
 import warnings
 from pathlib import Path
 from pprint import pprint
@@ -9,6 +10,7 @@ from typing import Dict, Literal, Optional, Union
 
 import gymnasium as gym
 import numpy as np
+import ray
 import smarts
 from ray.rllib.algorithms.algorithm import Algorithm, AlgorithmConfig
 from ray.rllib.algorithms.callbacks import DefaultCallbacks
@@ -226,6 +228,9 @@ if __name__ == "__main__":
         help="Episodes are divided into fragments of this many steps for each rollout.",
     )
     args = parser.parse_args()
+    ray.init(
+        ignore_reinit_error=True, num_cpus=args.num_workers, include_dashboard=False
+    )
 
     if not args.scenarios:
         raise ValueError("Please provide scenarios to train on.")
@@ -251,3 +256,5 @@ if __name__ == "__main__":
         checkpoint_num=args.checkpoint_num,
         log_level=args.log_level,
     )
+
+    ray.shutdown()

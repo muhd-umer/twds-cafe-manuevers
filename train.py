@@ -67,14 +67,14 @@ class Callbacks(DefaultCallbacks):
         **kwargs,
     ):
 
-        mean_ego_fei = np.mean(episode.user_data["fei"])
+        fei = np.mean(episode.user_data["fei"])
         print(
             colored(
-                f"ep. {episode.episode_id:<12} ended; mean_ego_fei={mean_ego_fei:.2f}",
+                f"ep. {episode.episode_id:<12} ended; fei={fei:.2f}",
                 "green",
             )
         )
-        episode.custom_metrics["mean_fei"] = mean_ego_fei
+        episode.custom_metrics["mean_fei"] = fei
 
 
 def main(
@@ -121,8 +121,13 @@ def main(
             },
         )
         .framework(framework="torch")  # Use PyTorch framework
+        .env_runners(
+            num_env_runners=num_workers,
+            num_envs_per_env_runner=1,
+            rollout_fragment_length=rollout_length,
+        )
         .training(
-            lr=7.5e-4,
+            lr_schedule=[[0, 1e-3], [1e3, 5e-4], [1e5, 1e-4], [1e7, 5e-5], [1e8, 1e-5]],
             train_batch_size=batch_size,
         )
         .multi_agent(
@@ -151,7 +156,7 @@ def main(
     else:
         checkpoint = None
 
-    print(colored(f"\n\nCheckpointing at {str(result_dir)}", "green"))
+    print(colored(f"\nCheckpointing at {str(result_dir)}", "green"))
 
     algo = algo_config.build()
     if checkpoint is not None:

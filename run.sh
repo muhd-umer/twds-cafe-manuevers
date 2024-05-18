@@ -25,7 +25,11 @@ case $1 in
     ;;
   4)
     echo -e "${CYAN}Starting envision and training on all scenarios...${NC}"
-    scl envision start & python train.py sumo/free sumo/normal sumo/congested
+    scl envision start & python train.py sumo/loop
+    ;;
+  5)
+    echo -e "${CYAN}Starting envision and training on all scenarios...${NC}"
+    scl envision start & python train.py sumo/free sumo/normal sumo/congested sumo/loop
     ;;
   *)
     echo -e "${RED}Invalid argument. Please provide a number between 1 and 4.${NC}"

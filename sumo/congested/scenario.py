@@ -1,87 +1,78 @@
 import random
-from itertools import combinations
 from pathlib import Path
 
+from smarts.core.colors import Colors
 from smarts.sstudio import gen_scenario
-from smarts.sstudio.sstypes import (
-    Flow,
-    Mission,
-    Route,
-    Scenario,
-    Traffic,
-    TrafficActor,
-    TrapEntryTactic,
+from smarts.sstudio import types as t
+
+traffic = t.Traffic(
+    flows=[
+        t.Flow(
+            route=t.Route(
+                begin=(route[0], random.randint(0, 2), "random"),
+                end=(route[1], random.randint(0, 2), "max"),
+            ),
+            repeat_route=True,
+            rate=10 * 60,
+            end=60 * 15,
+            actors={
+                t.TrafficActor(
+                    name="car",
+                    speed=t.Distribution(mean=0.5, sigma=0.8),
+                    vehicle_type=random.choice(
+                        ["passenger", "coach", "bus", "trailer", "truck"]
+                    ),
+                ): 1
+            },
+        )
+        for route in [("A", "B"), ("B", "A")] * 12
+    ],
+    trips=[
+        t.Trip("other_interest", route=t.RandomRoute(), depart=0.5),
+        t.Trip(
+            "leader",
+            route=t.Route(begin=("A", 0, 0.2), end=("A", 0, 20)),
+            depart=0,
+        ),
+    ],
 )
 
-normal = TrafficActor(
-    name="car",
+laner_actor = t.SocialAgentActor(
+    name="keep-lane-agent",
+    agent_locator="policies:keep-lane-agent-v0",
 )
-
-LOW = 20
-HIGH = 30
-
-# flow_name = (start_lane, end_lane)
-route_opt = [
-    (0, 0),
-    (1, 1),
-    (2, 2),
-]
-
-# Traffic combinations = 3C2 + 3C3 = 3 + 1 = 4
-# Repeated traffic combinations = 4 * 100 = 400
-min_flows = 2
-max_flows = 3
-route_comb = [
-    com
-    for elems in range(min_flows, max_flows + 1)
-    for com in combinations(route_opt, elems)
-] * 100
-
-traffic = {}
-for name, routes in enumerate(route_comb):
-    traffic[str(name)] = Traffic(
-        flows=[
-            Flow(
-                route=Route(
-                    begin=("gneE3", start_lane, 0),
-                    end=("gneE3", end_lane, "max"),
-                ),
-                # Random flow rate, between x and y vehicles per minute.
-                rate=60 * random.uniform(LOW, HIGH),
-                # Random flow start time, between x and y seconds.
-                begin=random.uniform(0, 5),
-                # For an episode with maximum_episode_steps=3000 and step
-                # time=0.1s, the maximum episode time=300s. Hence, traffic is
-                # set to end at 900s, which is greater than maximum episode
-                # time of 300s.
-                end=60 * 15,
-                actors={normal: 1},
-                randomly_spaced=True,
-            )
-            for start_lane, end_lane in routes
-        ]
-    )
-
-ego_missions = [
-    Mission(
-        Route(begin=("gneE3", 0, 10), end=("gneE3", 0, "max")),
-        entry_tactic=TrapEntryTactic(start_time=15),
-    ),
-    Mission(
-        Route(begin=("gneE3", 1, 10), end=("gneE3", 1, "max")),
-        entry_tactic=TrapEntryTactic(start_time=21),
-    ),
-    Mission(
-        Route(begin=("gneE3", 2, 10), end=("gneE3", 2, "max")),
-        entry_tactic=TrapEntryTactic(start_time=9),
-    ),
-]
-
 
 gen_scenario(
-    scenario=Scenario(
-        traffic=traffic,
-        ego_missions=ego_missions,
+    t.Scenario(
+        traffic={"basic": traffic},
+        social_agent_missions={
+            "all": (
+                [laner_actor],
+                [
+                    t.Mission(
+                        route=t.RandomRoute(),
+                        entry_tactic=t.IdEntryTactic(
+                            start_time=0.1,
+                            actor_id="other_interest",
+                            condition=t.TimeWindowCondition(0.1, 20.0),
+                        ),
+                    )
+                ],
+            )
+        },
+        bubbles=[
+            t.Bubble(
+                zone=t.PositionalZone(pos=(50, 0), size=(10, 15)),
+                margin=5,
+                actor=laner_actor,
+                follow_actor_id=t.Bubble.to_actor_id(laner_actor, mission_group="all"),
+                follow_offset=(-7, 10),
+            ),
+        ],
+        scenario_metadata=t.ScenarioMetadata(
+            actor_of_interest_re_filter=r"^(leader)|(other_interest)$",
+            actor_of_interest_color=Colors.Blue,
+        ),
     ),
     output_dir=Path(__file__).parent,
 )

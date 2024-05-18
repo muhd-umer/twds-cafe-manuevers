@@ -58,7 +58,7 @@ class Callbacks(DefaultCallbacks):
     ):
         single_agent_id = list(episode.get_agents())[0]
         infos = episode._last_infos.get(single_agent_id)
-        print(infos)
+
         if infos is not None:
             episode.user_data["fei"].append(infos["reward"])
             episode.user_data["speed"].append(infos["speed"])

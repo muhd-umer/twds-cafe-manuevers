@@ -25,8 +25,8 @@ class Adapter:
 
 _OBSERVATION_SPACE = gym.spaces.Dict(
     {
-        # "distance_from_center": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,)),
-        # "angle_error": gym.spaces.Box(low=-np.pi, high=np.pi, shape=(1,)),
+        "distance_from_center": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,)),
+        "angle_error": gym.spaces.Box(low=-np.pi, high=np.pi, shape=(1,)),
         "speed": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,)),
         "steering": gym.spaces.Box(low=-1e10, high=1e10, shape=(1,)),
         "ego_lane_dist": gym.spaces.Box(low=-1e10, high=1e10, shape=(3,)),

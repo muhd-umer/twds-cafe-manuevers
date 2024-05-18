@@ -164,5 +164,5 @@ cython_debug/
 
 SMARTS/
 rllib_agent_ref.py
-train_ref.py
+ref_train.py
 results/

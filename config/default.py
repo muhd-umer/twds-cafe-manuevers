@@ -16,7 +16,7 @@ DEFAULT_NUM_AGENTS = 2
 DEFAULT_NUM_WORKERS = multiprocessing.cpu_count() // 2 + 1
 DEFAULT_RESUME = False
 DEFAULT_LOG_LEVEL = "ERROR"
-DEFAULT_CHECKPOINT_FREQ = 3
+DEFAULT_CHECKPOINT_FREQ = 20
 
 
 def default_parser(prog: str) -> argparse.ArgumentParser:

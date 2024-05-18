@@ -76,6 +76,10 @@ class Callbacks(DefaultCallbacks):
         )
         episode.custom_metrics["mean_fei"] = fei
 
+        # Log fei to CSV file
+        with open(f"{result_dir}/fei.csv", "a") as f:
+            f.write(f"{episode.episode_id},{fei}\n")
+
 
 def main(
     scenarios,
@@ -166,6 +170,10 @@ def main(
     checkpoint_iteration = checkpoint_num or 0
 
     try:
+        # Create fei.csv file to log fei data
+        with open(f"{result_dir}/fei.csv", "w") as f:
+            f.write("episode_id,fei\n")
+
         while result.get("time_total_s", 0) < time_total:
             result = algo.train()
             print(colored(f"\nIteration {result['training_iteration']}", "blue"))

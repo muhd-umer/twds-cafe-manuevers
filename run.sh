@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pkill -f "envision start" 
+pkill -f "envision start"
 
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
@@ -11,29 +11,34 @@ echo -e "${GREEN}Starting script...${NC}"
 echo
 
 case $1 in
-  1)
-    echo -e "${CYAN}Starting envision and training on sumo/free scenarios...${NC}"
-    scl envision start & python train.py sumo/free
-    ;;
-  2)
-    echo -e "${CYAN}Starting envision and training on sumo/normal scenarios...${NC}"
-    scl envision start & python train.py sumo/normal
-    ;;
-  3)
-    echo -e "${CYAN}Starting envision and training on sumo/congested scenarios...${NC}"
-    scl envision start & python train.py sumo/congested
-    ;;
-  4)
-    echo -e "${CYAN}Starting envision and training on all scenarios...${NC}"
-    scl envision start & python train.py sumo/loop
-    ;;
-  5)
-    echo -e "${CYAN}Starting envision and training on all scenarios...${NC}"
-    scl envision start & python train.py sumo/free sumo/normal sumo/congested sumo/loop
-    ;;
-  *)
-    echo -e "${RED}Invalid argument. Please provide a number between 1 and 4.${NC}"
-    ;;
+1)
+  echo -e "${CYAN}Starting envision and training on all scenarios...${NC}"
+  scl envision start &
+  python train.py sumo/loop
+  ;;
+2)
+  echo -e "${CYAN}Starting envision and training on sumo/normal scenarios...${NC}"
+  scl envision start &
+  python train.py sumo/normal
+  ;;
+3)
+  echo -e "${CYAN}Starting envision and training on sumo/congested scenarios...${NC}"
+  scl envision start &
+  python train.py sumo/congested
+  ;;
+4)
+  echo -e "${CYAN}Starting envision and training on sumo/free scenarios...${NC}"
+  scl envision start &
+  python train.py sumo/free
+  ;;
+5)
+  echo -e "${CYAN}Starting envision and training on all scenarios...${NC}"
+  scl envision start &
+  python train.py sumo/loop sumo/free sumo/normal sumo/congested
+  ;;
+*)
+  echo -e "${RED}Invalid argument. Please provide a number between 1 and 4.${NC}"
+  ;;
 esac
 
 echo

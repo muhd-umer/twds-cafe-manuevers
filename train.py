@@ -153,7 +153,8 @@ def main(
             rollout_fragment_length=rollout_length,
         )
         .training(
-            lr_schedule=[[0, 1e-3], [1e3, 5e-4], [1e5, 1e-4], [1e7, 5e-5], [1e8, 1e-5]],
+            gamma=0.95,
+            lr=7.5e-4,
             train_batch_size=batch_size,
         )
         .multi_agent(
@@ -161,6 +162,7 @@ def main(
             policy_mapping_fn=lambda agent_id, episode, worker, **kwargs: f"{agent_id}",
         )
         .callbacks(callbacks_class=Callbacks)
+        .resources(num_gpus=1)
         .debugging(
             logger_config={
                 "type": CSVLogger,
@@ -229,7 +231,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     ray.init(
-        ignore_reinit_error=True, num_cpus=args.num_workers, include_dashboard=False
+        ignore_reinit_error=True,
+        num_cpus=multiprocessing.cpu_count() // 2 + 1,
+        include_dashboard=False,
+        num_gpus=1,
     )
 
     if not args.scenarios:

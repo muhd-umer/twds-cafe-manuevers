@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pkill -f "envision start" 
+
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 RED='\033[0;31m'

@@ -17,8 +17,8 @@ normal = TrafficActor(
     name="car",
 )
 
-LOW = 35
-HIGH = 45
+LOW = 20
+HIGH = 30
 
 # flow_name = (start_lane, end_lane)
 route_opt = [
@@ -65,7 +65,7 @@ for name, routes in enumerate(route_comb):
 ego_missions = [
     Mission(
         Route(begin=("gneE3", 0, 10), end=("gneE3", 0, "max")),
-        entry_tactic=TrapEntryTactic(start_time=19),
+        entry_tactic=TrapEntryTactic(start_time=15),
     ),
     Mission(
         Route(begin=("gneE3", 1, 10), end=("gneE3", 1, "max")),
@@ -73,9 +73,10 @@ ego_missions = [
     ),
     Mission(
         Route(begin=("gneE3", 2, 10), end=("gneE3", 2, "max")),
-        entry_tactic=TrapEntryTactic(start_time=17),
+        entry_tactic=TrapEntryTactic(start_time=9),
     ),
 ]
+
 
 gen_scenario(
     scenario=Scenario(

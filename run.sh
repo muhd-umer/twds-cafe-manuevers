@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pkill -f "envision start"
+# pkill -f "envision start"
 
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
@@ -12,23 +12,23 @@ echo
 
 case $1 in
 1)
-  echo -e "${CYAN}Starting envision and training on sumo/free scenarios...${NC}"
-  scl envision start &
+  echo -e "${CYAN}Training on sumo/free scenarios...${NC}"
+  # scl envision start &
   python train.py sumo/free
   ;;
 2)
-  echo -e "${CYAN}Starting envision and training on sumo/congested scenarios...${NC}"
-  scl envision start &
+  echo -e "${CYAN}Training on sumo/congested scenarios...${NC}"
+  # scl envision start &
   python train.py sumo/congested
   ;;
 3)
-  echo -e "${CYAN}Starting envision and training on sumo/normal scenarios...${NC}"
-  scl envision start &
+  echo -e "${CYAN}Training on sumo/normal scenarios...${NC}"
+  # scl envision start &
   python train.py sumo/normal
   ;;
 4)
-  echo -e "${CYAN}Starting envision and training on all scenarios...${NC}"
-  scl envision start &
+  echo -e "${CYAN}Training on all scenarios...${NC}"
+  # scl envision start &
   python train.py sumo/loop sumo/free sumo/normal sumo/congested
   ;;
 *)

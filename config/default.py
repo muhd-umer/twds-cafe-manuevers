@@ -18,15 +18,8 @@ DEFAULT_RESUME = False
 DEFAULT_LOG_LEVEL = "ERROR"
 DEFAULT_CHECKPOINT_FREQ = 3
 
-# root; one level up from the current file
-ROOT = Path(__file__).resolve().parent.parent
-Path.mkdir(ROOT / "results", exist_ok=True)
-DEFAULT_RESULT_DIR = str(ROOT / "results")
 
-
-def default_parser(
-    prog: str, default_result_dir: str = DEFAULT_RESULT_DIR
-) -> argparse.ArgumentParser:
+def default_parser(prog: str) -> argparse.ArgumentParser:
     """
     Generate an argument parser.
 
@@ -88,12 +81,6 @@ def default_parser(
         default=DEFAULT_RESUME,
         action="store_true",
         help="Resume an errored or 'ctrl+c' cancelled training. This does not extend a fully run original experiment.",
-    )
-    parser.add_argument(
-        "--result-dir",
-        type=str,
-        default=default_result_dir,
-        help="Directory containing results",
     )
     parser.add_argument(
         "--log-level",

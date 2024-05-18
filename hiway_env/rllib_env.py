@@ -200,6 +200,23 @@ class HiWayEnv(MultiAgentEnv):
                 "score": value,
                 "reward": rewards[agent_id],
                 "speed": observations[agent_id]["ego_vehicle_state"]["speed"],
+                "acceleration": math.sqrt(
+                    sum(
+                        v**2
+                        for v in observations[agent_id]["ego_vehicle_state"][
+                            "linear_acceleration"
+                        ]
+                    )
+                ),
+                "jerk": math.sqrt(
+                    sum(
+                        v**2
+                        for v in observations[agent_id]["ego_vehicle_state"][
+                            "linear_jerk"
+                        ]
+                    )
+                ),
+                "collisions": observations[agent_id]["events"]["collisions"],
             }
             for agent_id, value in scores.items()
         }

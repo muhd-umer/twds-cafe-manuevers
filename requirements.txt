@@ -1,0 +1,4 @@
+ray[rllib]==2.22.0
+numpy==1.26.4
+smarts[camera-obs,sumo,test,examples,envision]
+termcolor==2.4.0

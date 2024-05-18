@@ -80,11 +80,11 @@ class Callbacks(DefaultCallbacks):
         speed = np.mean(episode.user_data["speed"])
         acceleration = np.mean(episode.user_data["acceleration"])
         jerk = np.mean(episode.user_data["jerk"])
-        collisions = np.mean(episode.user_data["collisions"])
+        collisions = np.sum(episode.user_data["collisions"], dtype=int)
 
         print(
             colored(
-                f"ep. {episode.episode_id:<12} ended; fei={fei:.2f}; speed={speed:.2f}; acceleration={acceleration:.2f}; jerk={jerk:.2f}; collisions={collisions:.2f}",
+                f"ep. {episode.episode_id:<12} ended; fei={fei:.2f}; speed={speed:.2f}; acceleration={acceleration:.2f}; jerk={jerk:.2f}; collisions={collisions}",
                 "cyan",
             )
         )
@@ -92,7 +92,7 @@ class Callbacks(DefaultCallbacks):
         episode.custom_metrics["mean_speed"] = speed
         episode.custom_metrics["mean_acceleration"] = acceleration
         episode.custom_metrics["mean_jerk"] = jerk
-        episode.custom_metrics["mean_collisions"] = collisions
+        episode.custom_metrics["sum_collisions"] = collisions
 
         # Log fei to CSV file
         with open(f"{result_dir}/logs.csv", "a") as f:

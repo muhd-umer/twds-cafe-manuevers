@@ -43,6 +43,10 @@ class Callbacks(DefaultCallbacks):
         **kwargs,
     ):
         episode.user_data["fei"] = []
+        episode.user_data["speed"] = []
+        episode.user_data["acceleration"] = []
+        episode.user_data["jerk"] = []
+        episode.user_data["collisions"] = []
 
     @staticmethod
     def on_episode_step(
@@ -54,8 +58,13 @@ class Callbacks(DefaultCallbacks):
     ):
         single_agent_id = list(episode.get_agents())[0]
         infos = episode._last_infos.get(single_agent_id)
+        print(infos)
         if infos is not None:
             episode.user_data["fei"].append(infos["reward"])
+            episode.user_data["speed"].append(infos["speed"])
+            episode.user_data["acceleration"].append(infos["acceleration"])
+            episode.user_data["jerk"].append(infos["jerk"])
+            episode.user_data["collisions"].append(infos["collisions"])
 
     @staticmethod
     def on_episode_end(
@@ -68,17 +77,28 @@ class Callbacks(DefaultCallbacks):
     ):
 
         fei = np.mean(episode.user_data["fei"])
+        speed = np.mean(episode.user_data["speed"])
+        acceleration = np.mean(episode.user_data["acceleration"])
+        jerk = np.mean(episode.user_data["jerk"])
+        collisions = np.mean(episode.user_data["collisions"])
+
         print(
             colored(
-                f"ep. {episode.episode_id:<12} ended; fei={fei:.2f}",
-                "green",
+                f"ep. {episode.episode_id:<12} ended; fei={fei:.2f}; speed={speed:.2f}; acceleration={acceleration:.2f}; jerk={jerk:.2f}; collisions={collisions:.2f}",
+                "cyan",
             )
         )
         episode.custom_metrics["mean_fei"] = fei
+        episode.custom_metrics["mean_speed"] = speed
+        episode.custom_metrics["mean_acceleration"] = acceleration
+        episode.custom_metrics["mean_jerk"] = jerk
+        episode.custom_metrics["mean_collisions"] = collisions
 
         # Log fei to CSV file
-        with open(f"{result_dir}/fei.csv", "a") as f:
-            f.write(f"{episode.episode_id},{fei}\n")
+        with open(f"{result_dir}/logs.csv", "a") as f:
+            f.write(
+                f"{episode.episode_id},{fei},{speed},{acceleration},{jerk},{collisions}\n"
+            )
 
 
 def main(
@@ -171,7 +191,7 @@ def main(
 
     try:
         # Create fei.csv file to log fei data
-        with open(f"{result_dir}/fei.csv", "w") as f:
+        with open(f"{result_dir}/logs.csv", "w") as f:
             f.write("episode_id,fei\n")
 
         while result.get("time_total_s", 0) < time_total:

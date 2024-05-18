@@ -4,7 +4,7 @@ Train multiple agents using the PPO algorithm on a set of scenarios
 
 import warnings
 from pathlib import Path
-from pprint import pprint as print
+from pprint import pprint
 from typing import Dict, Literal, Optional, Union
 
 import gymnasium as gym
@@ -19,7 +19,9 @@ from ray.rllib.evaluation.episode_v2 import EpisodeV2
 from ray.rllib.evaluation.rollout_worker import RolloutWorker
 from ray.rllib.policy.policy import Policy
 from ray.rllib.utils.typing import PolicyID
+from ray.tune.logger import CSVLogger
 from smarts.sstudio.scenario_construction import build_scenarios
+from termcolor import colored
 
 from agent import TrainingModel, rllib_agent
 from config import default_parser
@@ -40,7 +42,7 @@ class Callbacks(DefaultCallbacks):
         env_index: int,
         **kwargs,
     ):
-        episode.user_data["ego_reward"] = []
+        episode.user_data["fei"] = []
 
     @staticmethod
     def on_episode_step(
@@ -53,7 +55,7 @@ class Callbacks(DefaultCallbacks):
         single_agent_id = list(episode.get_agents())[0]
         infos = episode._last_infos.get(single_agent_id)
         if infos is not None:
-            episode.user_data["ego_reward"].append(infos["reward"])
+            episode.user_data["fei"].append(infos["reward"])
 
     @staticmethod
     def on_episode_end(
@@ -65,13 +67,14 @@ class Callbacks(DefaultCallbacks):
         **kwargs,
     ):
 
-        mean_ego_speed = np.mean(episode.user_data["ego_reward"])
+        mean_ego_fei = np.mean(episode.user_data["fei"])
         print(
-            f"ep. {episode.episode_id:<12} ended;"
-            f" length={episode.length:<6}"
-            f" mean_ego_reward={mean_ego_speed:.2f}"
+            colored(
+                f"ep. {episode.episode_id:<12} ended; mean_ego_fei={mean_ego_fei:.2f}",
+                "green",
+            )
         )
-        episode.custom_metrics["mean_ego_reward"] = mean_ego_speed
+        episode.custom_metrics["mean_fei"] = mean_ego_fei
 
 
 def main(
@@ -119,7 +122,7 @@ def main(
         )
         .framework(framework="torch")  # Use PyTorch framework
         .training(
-            lr_schedule=[[0, 1e-3], [1e3, 5e-4], [1e5, 1e-4], [1e7, 5e-5], [1e8, 1e-5]],
+            lr=7.5e-4,
             train_batch_size=batch_size,
         )
         .multi_agent(
@@ -127,7 +130,13 @@ def main(
             policy_mapping_fn=lambda agent_id, episode, worker, **kwargs: f"{agent_id}",
         )
         .callbacks(callbacks_class=Callbacks)
-        .debugging(log_level=log_level)
+        .debugging(
+            logger_config={
+                "type": CSVLogger,
+                "logdir": result_dir,
+            },
+            log_level=log_level,
+        )
     )
 
     def get_checkpoint_dir(num):
@@ -142,7 +151,7 @@ def main(
     else:
         checkpoint = None
 
-    print(f"======= Checkpointing at {str(result_dir)} =======")
+    print(colored(f"\n\nCheckpointing at {str(result_dir)}", "green"))
 
     algo = algo_config.build()
     if checkpoint is not None:
@@ -152,14 +161,14 @@ def main(
     checkpoint_iteration = checkpoint_num or 0
 
     try:
-        while result.get("time_total", 0) < time_total:
+        while result.get("time_total_s", 0) < time_total:
             result = algo.train()
-            print(f"======== Iteration {result['training_iteration']} ========")
-            print(result, depth=1)
+            print(colored(f"\nIteration {result['training_iteration']}", "blue"))
+            pprint(result, depth=1)
 
             if current_iteration % checkpoint_freq == 0:
                 checkpoint_dir = get_checkpoint_dir(checkpoint_iteration)
-                print(f"======= Saving checkpoint {checkpoint_iteration} =======")
+                print(colored(f"\nSaving checkpoint {checkpoint_iteration}", "yellow"))
                 algo.save_checkpoint(checkpoint_dir)
                 checkpoint_iteration += 1
             current_iteration += 1

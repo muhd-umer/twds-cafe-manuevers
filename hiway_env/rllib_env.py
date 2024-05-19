@@ -205,7 +205,7 @@ class HiWayEnv(MultiAgentEnv):
             fuel_efficiency_indicator = NFF / most_efficient_NFF
 
             # Example custom reward: encourage fuel efficiency
-            r1 = 1 / fuel_efficiency_indicator
+            r1 = -1 * fuel_efficiency_indicator
             r2 = -1 * jerk
             r3 = rewards[agent_id]
 
@@ -214,7 +214,7 @@ class HiWayEnv(MultiAgentEnv):
             else:
                 r4 = 0
 
-            w1 = 3.23
+            w1 = -0.16
             w2 = 0.23
             w3 = 2.76
             w4 = 1.0

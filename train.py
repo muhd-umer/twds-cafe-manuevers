@@ -44,6 +44,7 @@ class Callbacks(DefaultCallbacks):
         env_index: int,
         **kwargs,
     ):
+        episode.user_data["reward"] = []
         episode.user_data["fei"] = []
         episode.user_data["speed"] = []
         episode.user_data["acceleration"] = []
@@ -62,7 +63,8 @@ class Callbacks(DefaultCallbacks):
         infos = episode._last_infos.get(single_agent_id)
 
         if infos is not None:
-            episode.user_data["fei"].append(infos["reward"])
+            episode.user_data["reward"].append(infos["reward"])
+            episode.user_data["fei"].append(infos["fei"])
             episode.user_data["speed"].append(infos["speed"])
             episode.user_data["acceleration"].append(infos["acceleration"])
             episode.user_data["jerk"].append(infos["jerk"])
@@ -77,7 +79,7 @@ class Callbacks(DefaultCallbacks):
         env_index: int,
         **kwargs,
     ):
-
+        reward = np.mean(episode.user_data["reward"])
         fei = np.mean(episode.user_data["fei"])
         speed = np.mean(episode.user_data["speed"])
         acceleration = np.mean(episode.user_data["acceleration"])
@@ -86,10 +88,15 @@ class Callbacks(DefaultCallbacks):
 
         print(
             colored(
-                f"ep. {episode.episode_id:<12} ended; fei={fei:.2f}; speed={speed:.2f}; acceleration={acceleration:.2f}; jerk={jerk:.2f}; collisions={collisions}",
-                "cyan",
-            )
+                f"ep. {episode.episode_id:<12} ended;",
+                "green",
+            ),
+            colored(
+                f" reward: {reward:.2f}, fei: {fei:.2f}, speed: {speed:.2f}, acceleration: {acceleration:.2f}, jerk: {jerk:.2f}, collisions: {collisions}",
+                "black",
+            ),
         )
+        episode.custom_metrics["mean_reward"] = reward
         episode.custom_metrics["mean_fei"] = fei
         episode.custom_metrics["mean_speed"] = speed
         episode.custom_metrics["mean_acceleration"] = acceleration
@@ -99,7 +106,7 @@ class Callbacks(DefaultCallbacks):
         # Log fei to CSV file
         with open(f"{result_dir}/logs.csv", "a") as f:
             f.write(
-                f"{episode.episode_id},{fei},{speed},{acceleration},{jerk},{collisions}\n"
+                f"{episode.episode_id},{reward},{fei},{speed},{acceleration},{jerk},{collisions}\n"
             )
 
 
@@ -196,7 +203,7 @@ def main(
     try:
         # Create fei.csv file to log fei data
         with open(f"{result_dir}/logs.csv", "w") as f:
-            f.write("episode_id,fei\n")
+            f.write("episode_id,reward,fei,speed,acceleration,jerk,collisions\n")
 
         while result.get("time_total_s", 0) < time_total:
             result = algo.train()

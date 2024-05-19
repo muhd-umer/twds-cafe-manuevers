@@ -9,9 +9,9 @@ from pathlib import Path
 # Define constants for default values
 DEFAULT_SCENARIOS = None
 DEFAULT_ENVISION = False
-DEFAULT_BATCH_SIZE = 2000
+DEFAULT_BATCH_SIZE = 512
 DEFAULT_TIME_TOTAL = 1 * 60 * 60  # 1 hour 30 minutes
-DEFAULT_SEED = 17
+DEFAULT_SEED = 42
 DEFAULT_NUM_AGENTS = 2
 DEFAULT_NUM_WORKERS = multiprocessing.cpu_count() // 2 + 1
 DEFAULT_RESUME = False

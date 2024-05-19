@@ -111,7 +111,7 @@ rllib_agent = {
         interface=AgentInterface.from_type(
             AgentType.LanerWithSpeed,
             neighborhood_vehicle_states=True,
-            max_episode_steps=500,
+            max_episode_steps=100,
         ),
         agent_params={
             "path_to_model": Path(__file__).resolve().parent / "model.pt",

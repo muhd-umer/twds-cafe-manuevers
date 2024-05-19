@@ -215,9 +215,9 @@ class HiWayEnv(MultiAgentEnv):
                 r4 = 0
 
             w1 = 3.23
-            w2 = 1.14
+            w2 = 0.43
             w3 = 2.42
-            w4 = 1.51
+            w4 = 1.0
 
             rewards[agent_id] = (w1 * r1) + (w2 * r2) + (w3 * r3) + (w4 * r4)
 

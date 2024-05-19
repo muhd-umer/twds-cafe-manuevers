@@ -44,7 +44,7 @@ class Callbacks(DefaultCallbacks):
         env_index: int,
         **kwargs,
     ):
-        episode.user_data["reward"] = []
+        episode.user_data["reward"] = 0
         episode.user_data["fei"] = []
         episode.user_data["speed"] = []
         episode.user_data["acceleration"] = []
@@ -63,7 +63,7 @@ class Callbacks(DefaultCallbacks):
         infos = episode._last_infos.get(single_agent_id)
 
         if infos is not None:
-            episode.user_data["reward"].append(infos["reward"])
+            episode.user_data["reward"] += infos["reward"]
             episode.user_data["fei"].append(infos["fei"])
             episode.user_data["speed"].append(infos["speed"])
             episode.user_data["acceleration"].append(infos["acceleration"])
@@ -79,7 +79,7 @@ class Callbacks(DefaultCallbacks):
         env_index: int,
         **kwargs,
     ):
-        reward = np.mean(episode.user_data["reward"])
+        reward = episode.user_data["reward"]
         fei = np.mean(episode.user_data["fei"])
         speed = np.mean(episode.user_data["speed"])
         acceleration = np.mean(episode.user_data["acceleration"])
@@ -96,7 +96,7 @@ class Callbacks(DefaultCallbacks):
                 "black",
             ),
         )
-        episode.custom_metrics["mean_reward"] = reward
+        episode.custom_metrics["reward"] = reward
         episode.custom_metrics["mean_fei"] = fei
         episode.custom_metrics["mean_speed"] = speed
         episode.custom_metrics["mean_acceleration"] = acceleration
@@ -160,9 +160,15 @@ def main(
             rollout_fragment_length=rollout_length,
         )
         .training(
-            gamma=0.95,
-            lr=7.5e-4,
+            gamma=0.99,
+            lr=0.0003,
+            lambda_=0.1,
             train_batch_size=batch_size,
+            model={
+                "fcnet_activation": "relu",
+                "fcnet_hiddens": [128, 128],
+            },
+            sgd_minibatch_size=64,
         )
         .multi_agent(
             policies=rllib_policies,

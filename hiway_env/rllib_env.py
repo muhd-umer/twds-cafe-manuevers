@@ -214,7 +214,7 @@ class HiWayEnv(MultiAgentEnv):
             else:
                 r4 = 0
 
-            w1 = -0.16
+            w1 = 0.16
             w2 = 0.23
             w3 = 2.76
             w4 = 1.0

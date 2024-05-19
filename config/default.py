@@ -10,7 +10,7 @@ from pathlib import Path
 DEFAULT_SCENARIOS = None
 DEFAULT_ENVISION = False
 DEFAULT_BATCH_SIZE = 1024
-DEFAULT_TIME_TOTAL = 2 * 60 * 60  # 2 hours
+DEFAULT_TIME_TOTAL = 1.5 * 60 * 60  # 1 hour 30 minutes
 DEFAULT_SEED = 42
 DEFAULT_NUM_AGENTS = 2
 DEFAULT_NUM_WORKERS = multiprocessing.cpu_count() // 2 + 1

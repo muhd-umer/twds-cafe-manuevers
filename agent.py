@@ -6,13 +6,15 @@ of familiarity with the PyTorch API
 
 Action Space:
 - Discrete: lane_change -> right lane, keep lane, left lane
-- Continuous: target_speed
+- Continuous: target_speed -> 0 to 50 m/s
 
 Observation Space:
-- speed
-- steering
-- ego_ttc
-- ego_lane_dist
+- distance_from_center: Distance to lane center
+- angle_error: Ego heading relative to the closest waypoint
+- speed: Ego speed
+- steering: Ego steering
+- ego_ttc: Time to collision in each lane
+- ego_lane_dist: Closest cars' distance to ego in each lane
 """
 
 from pathlib import Path
@@ -45,7 +47,7 @@ def obs_adapter(agent_observation, /):
 # ACTION_SPACE
 ACTION_SPACE = gym.spaces.Tuple(
     (
-        gym.spaces.Box(low=0, high=60, shape=(), dtype=float),
+        gym.spaces.Box(low=0, high=50, shape=(), dtype=float),
         gym.spaces.Box(low=0, high=2, shape=(), dtype=int),
     )
 )

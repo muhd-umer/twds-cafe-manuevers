@@ -166,3 +166,7 @@ SMARTS/
 rllib_agent_ref.py
 ref_train.py
 results/
+*.m
+*.asm
+*.pdb
+*.asv

@@ -19,6 +19,33 @@ from smarts.env.utils.observation_conversion import (
 from smarts.zoo.agent_spec import AgentSpec
 
 
+def compute_fuel_efficiency_indicator(observation):
+    """Calculates the fuel efficiency indicator based on vehicle state."""
+    speed = observation["ego_vehicle_state"]["speed"]
+    linear_acceleration = observation["ego_vehicle_state"].get("linear_acceleration")
+
+    if linear_acceleration is not None:
+        accel_x = linear_acceleration[0]
+        accel_y = linear_acceleration[1]
+
+        acceleration = math.sqrt(accel_x**2 + accel_y**2)
+    else:
+        acceleration = 0.0
+
+    cruising_speed = 30.0
+
+    # Compute VSP
+    VSP = speed * (1.1 * acceleration + 0.132) + 0.000302 * speed**3
+    NFR = 1.71 * VSP**0.42
+    NFF = 3600 * (NFR / cruising_speed)
+
+    # Reference most efficient NFF
+    most_efficient_NFF = 162.33
+    fuel_efficiency_indicator = NFF / most_efficient_NFF
+
+    return fuel_efficiency_indicator
+
+
 class HiWayEnv(MultiAgentEnv):
     """Serves as a format to run multiple environments in parallel.
 
@@ -147,6 +174,8 @@ class HiWayEnv(MultiAgentEnv):
         for agent_id, obs in env_observations.items():
             speed = obs["ego_vehicle_state"]["speed"]
             linear_acceleration = obs["ego_vehicle_state"].get("linear_acceleration")
+            linear_jerk = obs["ego_vehicle_state"].get("linear_jerk")
+            collisions = obs["events"]["collisions"]
 
             if linear_acceleration is not None:
                 accel_x = linear_acceleration[0]
@@ -156,7 +185,15 @@ class HiWayEnv(MultiAgentEnv):
             else:
                 acceleration = 0.0
 
-            cruising_speed = 30.0  # Assume a typical cruising speed, e.g., 30 m/s
+            if linear_jerk is not None:
+                jerk_x = linear_jerk[0]
+                jerk_y = linear_jerk[1]
+
+                jerk = math.sqrt(jerk_x**2 + jerk_y**2)
+            else:
+                jerk = 0.0
+
+            cruising_speed = 25.0  # Assume a typical cruising speed, e.g., 25 m/s
 
             # Compute VSP
             VSP = speed * (1.1 * acceleration + 0.132) + 0.000302 * speed**3
@@ -168,9 +205,21 @@ class HiWayEnv(MultiAgentEnv):
             fuel_efficiency_indicator = NFF / most_efficient_NFF
 
             # Example custom reward: encourage fuel efficiency
-            custom_reward = 1 / fuel_efficiency_indicator
+            r1 = 1 / fuel_efficiency_indicator
+            r2 = -1 * jerk
+            r3 = rewards[agent_id]
 
-            rewards[agent_id] = custom_reward
+            if collisions > 0:
+                r4 = -1
+            else:
+                r4 = 0
+
+            w1 = 3.23
+            w2 = 1.14
+            w3 = 2.42
+            w4 = 1.51
+
+            rewards[agent_id] = (w1 * r1) + (w2 * r2) + (w3 * r3) + (w4 * r4)
 
         # Agent termination: RLlib expects that we return a "last observation"
         # on the step that an agent transitions to "done". All subsequent calls
@@ -217,6 +266,7 @@ class HiWayEnv(MultiAgentEnv):
                     )
                 ),
                 "collisions": observations[agent_id]["events"]["collisions"],
+                "fei": compute_fuel_efficiency_indicator(observations[agent_id]),
             }
             for agent_id, value in scores.items()
         }

@@ -170,3 +170,4 @@ results/
 *.asm
 *.pdb
 *.asv
+plots/
